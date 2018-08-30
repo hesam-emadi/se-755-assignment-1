@@ -44,7 +44,7 @@ def predictLinearRegression(trainingData, testData, trainingTarget, testTarget):
 
 def predictRidgeRegression(trainingData, testData, trainingTarget, testTarget):
     # Create linear regression object
-    regr = Ridge(alpha=.5)
+    regr = Ridge(alpha=0.1)
 
     # Train the model using the training sets
     regr.fit(trainingData, trainingTarget)
@@ -117,12 +117,12 @@ full_pipeline = FeatureUnion(transformer_list=[
     ("cat_pipeline", stringFeaturePipeline),
 ])
 
-feature_prepared = pd.DataFrame(data=full_pipeline.fit_transform(worldcupAllFeatures), index=np.arange(1, 65))
+preprocessedFeature = pd.DataFrame(data=full_pipeline.fit_transform(worldcupAllFeatures), index=np.arange(1, 65))
 # worldcup_cleaned = pd.concat([feature_prepared, w_goals.to_frame(), w_results.to_frame()], axis=1)
 
 # Split the data into training/testing sets
 worldcupFeatureTrainingData, testData, worldcupTargetTrainingData, testTarget = \
-    train_test_split(feature_prepared, scoreAsTarget, test_size=0.2, random_state=1)
+    train_test_split(preprocessedFeature, scoreAsTarget, test_size=0.2, random_state=1)
 
 predictLinearRegression(worldcupFeatureTrainingData, testData, worldcupTargetTrainingData, testTarget)
 predictRidgeRegression(worldcupFeatureTrainingData, testData, worldcupTargetTrainingData, testTarget)
