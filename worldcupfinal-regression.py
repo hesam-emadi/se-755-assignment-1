@@ -72,15 +72,13 @@ def predictRidgeRegression(trainingData, testData, trainingTarget, testTarget):
 
 worldcup = pd.read_csv("./resource/world-cup-2018/worldcup-2018.csv", index_col=0)
 
-worldcup.drop(['Location', 'Phase', 'Date', 'Team1_Ball_Possession(%)'], axis=1, inplace=True)
+worldcup.drop(['Location', 'Date', 'Normal_Time', 'Team1_Offsides', 'Team2_Offsides', 'Team1_Ball_Possession(%)'], axis=1, inplace=True)
 worldcup.describe()
 
 # world cup attributes
-worldcupAllFeatures = worldcup.iloc[:, np.arange(24)].copy()
+worldcupAllFeatures = worldcup.iloc[:, np.arange(22)].copy()
 # world cup goal result
-scoreAsTarget = worldcup.iloc[:, 24].copy()
-# wordl cup match result
-w_results = worldcup.iloc[:, 25].copy()
+scoreAsTarget = worldcup.iloc[:, 22].copy()
 
 
 # Create a class to select numerical or categorical columns
@@ -96,10 +94,10 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
 
 
 numericFeatures = worldcupAllFeatures.drop(
-    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Normal_Time'], axis=1, inplace=False)
+    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Phase'], axis=1, inplace=False)
 
 stringFeatures = worldcupAllFeatures[
-    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Normal_Time']].copy()
+    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Phase']].copy()
 
 numericFeaturePipeline = Pipeline([
     ('selector', DataFrameSelector(list(numericFeatures))),
@@ -118,7 +116,7 @@ full_pipeline = FeatureUnion(transformer_list=[
 ])
 
 preprocessedFeature = pd.DataFrame(data=full_pipeline.fit_transform(worldcupAllFeatures), index=np.arange(1, 65))
-# worldcup_cleaned = pd.concat([feature_prepared, w_goals.to_frame(), w_results.to_frame()], axis=1)
+
 
 # Split the data into training/testing sets
 worldcupFeatureTrainingData, testData, worldcupTargetTrainingData, testTarget = \

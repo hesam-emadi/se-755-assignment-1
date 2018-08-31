@@ -9,16 +9,21 @@ from sklearn.model_selection import train_test_split
 import category_encoders as cs
 from sklearn.pipeline import FeatureUnion
 
+from sklearn.linear_model import Perceptron
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
 worldcup = pd.read_csv("./resource/world-cup-2018/worldcup-2018.csv", index_col=0)
 
-worldcup.drop(['Location', 'Phase', 'Date', 'Team1_Ball_Possession(%)'], axis=1, inplace=True)
+worldcup.drop(['Location', 'Date', 'Normal_Time', 'Team1_Offsides', 'Team2_Offsides', 'Team1_Ball_Possession(%)'], axis=1, inplace=True)
 worldcup.describe()
 
 # world cup attributes
-worldcupAllFeatures = worldcup.iloc[:, np.arange(24)].copy()
+worldcupAllFeatures = worldcup.iloc[:, np.arange(22)].copy()
 
 # wordl cup match result
-resultAsTargetStr = worldcup.iloc[:, 25].copy()
+resultAsTargetStr = worldcup.iloc[:, 23].copy()
 
 
 def mapResultToNumber(result):
@@ -45,10 +50,10 @@ class DataFrameSelector(BaseEstimator, TransformerMixin):
 
 
 numericFeatures = worldcupAllFeatures.drop(
-    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Normal_Time'], axis=1, inplace=False)
+    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Phase'], axis=1, inplace=False)
 
 stringFeatures = worldcupAllFeatures[
-    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Normal_Time']].copy()
+    ['Team1', 'Team2', 'Team1_Continent', 'Team2_Continent', 'Phase']].copy()
 
 numericFeaturePipeline = Pipeline([
     ('selector', DataFrameSelector(list(numericFeatures))),
@@ -122,3 +127,62 @@ clf = Pipeline([
 clf.fit(Train_Matrix, Train_Target_Matrix)
 # data testing
 T_predict = clf.predict(Test_Matrix)
+
+## Perceptron ###############
+clfPerceptron = Perceptron(n_iter=100)
+
+clfPerceptron.fit(Train_Matrix, Train_Target_Matrix)
+
+# Make predictions using the testing set
+testDataPrediction = clfPerceptron.predict(Test_Matrix)
+
+# Make predictions using the testing set
+trainingDataPrediction = clfPerceptron.predict(Train_Matrix)
+
+print("Perceptron: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(
+    100 * accuracy_score(Test_Target_Matrix, testDataPrediction)))
+
+
+## Naive Bayes ###############
+naiveBayesClassifier = GaussianNB()
+
+naiveBayesClassifier.fit(Train_Matrix, Train_Target_Matrix)
+
+# Make predictions using the testing set
+testDataPrediction = naiveBayesClassifier.predict(Test_Matrix)
+
+# Make predictions using the testing set
+trainingDataPrediction = naiveBayesClassifier.predict(Train_Matrix)
+
+print("Naive Bayes: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(
+    100 * accuracy_score(Test_Target_Matrix, testDataPrediction)))
+
+
+## Decision trees ###############
+dTreeClassifier = DecisionTreeClassifier()
+
+dTreeClassifier.fit(Train_Matrix, Train_Target_Matrix)
+
+# Make predictions using the testing set
+testDataPrediction = dTreeClassifier.predict(Test_Matrix)
+
+# Make predictions using the testing set
+trainingDataPrediction = dTreeClassifier.predict(Train_Matrix)
+
+print("Decision trees: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(
+    100 * accuracy_score(Test_Target_Matrix, testDataPrediction)))
+
+
+## Nearest neighbour classifier ###############
+nnClassifier = KNeighborsClassifier()
+
+nnClassifier.fit(Train_Matrix, Train_Target_Matrix)
+
+# Make predictions using the testing set
+testDataPrediction = nnClassifier.predict(Test_Matrix)
+
+# Make predictions using the testing set
+trainingDataPrediction = nnClassifier.predict(Train_Matrix)
+
+print("Nearest neighbour classifier: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(
+    100 * accuracy_score(Test_Target_Matrix, testDataPrediction)))
