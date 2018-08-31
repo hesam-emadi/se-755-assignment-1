@@ -15,34 +15,32 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
-occupancy = pd.read_csv("./resource/occupancy-sensor/occupancy_sensor_data.csv")
+landsatData = pd.read_csv("./resource/landsat/lantsat.csv")
 
-occupancy.drop(['date', 'HumidityRatio'], axis=1, inplace=True)
-occupancy.describe()
+landsatData.describe()
 
-# occupancy attributes
-X_occupancyAllFeatures = occupancy.iloc[:, np.arange(4)].copy()
+# landsat Data attributes
+X_landSatAllFeatures = landsatData.iloc[:, np.arange(36)].copy()
 
-# occupancy result
-y_occupancyAsTarget = occupancy.iloc[:, 4].copy()
+# landsat result
+y_midPixelAsTarget = landsatData.iloc[:, 36].copy()
 
-feature_prepared = X_occupancyAllFeatures
+feature_prepared = X_landSatAllFeatures
 
-# Split the data into training/testing sets
-# worldcupFeatureTrainingData, testData, worldcupTargetTrainingData, testTarget = \
-#     train_test_split(feature_prepared, y_occupancyAsTarget, test_size=0.2, random_state=1)
+
+# feature_prepared=pd.read_csv("SVM_demo.csv", index_col=74)
 
 # Testing and training sentences splitting (stratified + shuffled) based on the index (sentence ID)
 allFeatures = feature_prepared.index
-targetData = y_occupancyAsTarget
+targetData = y_midPixelAsTarget
 sss = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=42)
 
 for train_index, test_index in sss.split(allFeatures, targetData):
     train_ind, test_ind = allFeatures[train_index], allFeatures[test_index]
 Test_Matrix = feature_prepared.loc[test_ind]
-Test_Target_Matrix = y_occupancyAsTarget.loc[test_ind]
+Test_Target_Matrix = y_midPixelAsTarget.loc[test_ind]
 Train_Matrix = feature_prepared.loc[train_ind]
-Train_Target_Matrix = y_occupancyAsTarget.loc[train_ind]
+Train_Target_Matrix = y_midPixelAsTarget.loc[train_ind]
 
 # data training with hyperparameter tuning for C
 clf = Pipeline([
@@ -60,8 +58,7 @@ clf = grid_search.best_estimator_
 # data testing
 T_predict = clf.predict(Test_Matrix)
 
-print("SVM: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(
-    100 * accuracy_score(Test_Target_Matrix, T_predict)))
+print("SVM: The prediction accuracy (tuned) for all testing sentence is : {:.2f}%.".format(100 * accuracy_score(Test_Target_Matrix, T_predict)))
 
 ## Perceptron ###############
 clfPerceptron = Perceptron(n_iter=100)
