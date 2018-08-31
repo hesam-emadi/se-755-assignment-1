@@ -13,9 +13,11 @@ Structure:
 
 - worldcupfinal-regression.py
 
-- resource
+- resource:
+
   All the resource files, including data files have been kept under this directory
 
-- scratchpad
+- scratchpad:
+
   Includes sample codes and are not part of the submission code
 
