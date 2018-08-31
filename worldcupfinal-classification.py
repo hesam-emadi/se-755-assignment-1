@@ -6,12 +6,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-from sklearn import datasets, linear_model
-from sklearn.metrics import mean_squared_error, r2_score
 import category_encoders as cs
 from sklearn.pipeline import FeatureUnion
-
-from sklearn.linear_model import Ridge
 
 worldcup = pd.read_csv("./resource/world-cup-2018/worldcup-2018.csv", index_col=0)
 
@@ -32,7 +28,9 @@ def mapResultToNumber(result):
         'loss': 3
     }[result]
 
+
 resultAsTarget = resultAsTargetStr.map(mapResultToNumber)
+
 
 # Create a class to select numerical or categorical columns
 class DataFrameSelector(BaseEstimator, TransformerMixin):

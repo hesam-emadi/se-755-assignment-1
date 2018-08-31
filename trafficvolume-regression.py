@@ -1,15 +1,8 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import Imputer
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-
 from sklearn import datasets, linear_model
 from sklearn.metrics import mean_squared_error, r2_score, precision_recall_curve, average_precision_score
-import category_encoders as cs
-from sklearn.pipeline import FeatureUnion
 
 from sklearn.linear_model import Ridge
 
